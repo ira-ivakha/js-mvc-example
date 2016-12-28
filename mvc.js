@@ -41,11 +41,16 @@ MVC.Model = function () {
     var model = this,
         items = [],
         currentIndex = -1;
+    this.modelChangedSubject = MVC.ObservableSubject();
+
+
 
     this.addItem = function (value) {
-        items.pop(value);
+        items.push(value);
 
+        saveData();
         //TODO send notify
+        model.modelChangedSubject.notify();
     };
 
     this.getItems = function () {
@@ -58,7 +63,9 @@ MVC.Model = function () {
         }
 
         items.splice(model.currentIndex, 1);
+        saveData();
         //TODO send notify
+        model.modelChangedSubject.notify();
     };
 
     this.getCurrentIndex = function () {
@@ -68,7 +75,14 @@ MVC.Model = function () {
     this.setCurrentIndex = function (value) {
         currentIndex = value;
         //TODO send notify
+        // model.modelChangedSubject.notify();
+    };
+
+    function saveData() {
+        localStorage.setItem('items', JSON.stringify(items));
     }
+
+    items = JSON.parse(localStorage.getItem('items') || '[]');
 };
 
 MVC.View = function (model, rootObj) {
@@ -79,13 +93,13 @@ MVC.View = function (model, rootObj) {
     view.select = document.createElement('select');
     view.select.size = 5;
 
-    var option = document.createElement("option");
-    option.text = "Kiwi";
-    view.select.add(option);
-
-    option = document.createElement("option");
-    option.text = "Kiwi2";
-    view.select.add(option);
+    // var option = document.createElement("option");
+    // option.text = "Kiwi";
+    // view.select.add(option);
+    //
+    // option = document.createElement("option");
+    // option.text = "Kiwi2";
+    // view.select.add(option);
 
 
     rootObj.appendChild(view.select);
@@ -98,22 +112,22 @@ MVC.View = function (model, rootObj) {
     view.removeBtn.textContent = '-';
     rootObj.appendChild(view.removeBtn);
 
-    // model.modelChangedSubject.addObserver(function () {
-    //     var items = model.getItems();
-    //     var innerHTML = '';
-    //     for (var i = 0; i<items.length; i += 1) {
-    //         innerHTML += "<option>"+items[i]+"</option>";
-    //     }
-    //     that.select.html(innerHTML);
-    // });
-    // model.selectedIndexChangedSubject.addObserver(function () {
-    //     if(model.getSelectedIndex() === -1) {
-    //         that.buttonRemove.fadeOut();
-    //     } else {
-    //         that.buttonRemove.fadeIn();
-    //     }
-    // });
+    model.modelChangedSubject.addObserver(function () {
+        var items = model.getItems();
+        console.log('items', items);
+        console.log(view.select.childNodes);
+        // return;
 
+        for (var i = 0; view.select.childNodes.length; i++) {
+            view.select.childNodes[0].remove();
+        }
+
+        items.forEach(function (el) {
+            var option = document.createElement('option');
+            option.textContent = el;
+            view.select.appendChild(option);
+        });
+    });
 };
 
 
@@ -131,6 +145,8 @@ MVC.Controller = function (model, view) {
         model.setCurrentIndex(view.select.selectedIndex);
     });
 
+
+    model.modelChangedSubject.notify();
 };
 
 
@@ -138,6 +154,7 @@ window.addEventListener('load', function () {
     var model = new MVC.Model();
     var view = new MVC.View(model, document.body);
     var controller = new MVC.Controller(model, view);
+
 });
 
 
