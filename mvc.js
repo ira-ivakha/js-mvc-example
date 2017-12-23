@@ -130,8 +130,6 @@ MVC.View = function (model, rootObj) {
     });
 };
 
-
-
 MVC.Controller = function (model, view) {
     view.addBtn.addEventListener('click', function () {
         model.addItem(prompt('Add item', 'item'));
@@ -148,7 +146,6 @@ MVC.Controller = function (model, view) {
 
     model.modelChangedSubject.notify();
 };
-
 
 window.addEventListener('load', function () {
     var model = new MVC.Model();
