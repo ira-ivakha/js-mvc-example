@@ -1,4 +1,5 @@
-function taskView(rootElement, tasks, actions) {
+
+export default function taskView(rootElement, tasks, actions) {
     let ul = document.createElement('ul');
 
     let template = document.createElement('li');

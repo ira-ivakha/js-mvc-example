@@ -1,4 +1,4 @@
-function TaskModel(tasks) {
+export default function TaskModel(tasks) {
     this.listeners = [];
 
     tasks = tasks || [];
