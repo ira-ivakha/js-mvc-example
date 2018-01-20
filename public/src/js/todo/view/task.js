@@ -1,4 +1,3 @@
-
 export default function taskView(rootElement, tasks, actions) {
     let ul = document.createElement('ul');
 
