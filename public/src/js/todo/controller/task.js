@@ -1,5 +1,5 @@
 import taskView from '../view/task'
-// import TaskModel from '../model/taskModel'
+import tasks from '../model/task'
 import taskAddFromView from '../view/taskAddForm'
 
 export default  function taskController(rootElement) {
